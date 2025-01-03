@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  fastify:
+    image: node:23
+    container_name: fastify_server
+    working_dir: /app
+    volumes:
+      - ./fastify:/app
+    ports:
+      - "3000:3000"
+    networks:
+      - test_network
+    command: "node server.js"
+
+  mysql:
+    image: mysql:8
+    container_name: mysql_db
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: load_test
+      MYSQL_USER: test_user
+      MYSQL_PASSWORD: password
+    ports:
+      - "3307:3306"
+    networks:
+      - test_network
+    volumes:
+      - mysql_test_data:/var/lib/mysql   # Volume dédié pour la base de données de test
+
+networks:
+  test_network:
+    driver: bridge
+
+volumes:
+  mysql_test_data:
+    driver: local   # Déclaration d'un volume dédié pour la base de données de test
